@@ -1,15 +1,31 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Roamly.Identity.Api.Data; 
+using Roamly.Identity.Api.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// --- 1. ĞÅÃÈÑÒĞÀÖÈß ÑÅĞÂÈÑÎÂ (DI Container) ---
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Ğåãèñòğàöèÿ ÁÄ
+builder.Services.AddDbContext<IdentityDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityDbConnection")));
+
+// Ğåãèñòğàöèÿ Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<IdentityDbContext>()
+    .AddDefaultTokenProviders();
+
+// --- 2. ÑÁÎĞÊÀ ÏĞÈËÎÆÅÍÈß ---
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- 3. ÍÀÑÒĞÎÉÊÀ MIDDLEWARE (Pipeline) ---
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -18,6 +34,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
