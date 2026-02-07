@@ -6,7 +6,7 @@ namespace Roamly.Identity.Api.Data
 {
     public class IdentityDbContext : IdentityDbContext<ApplicationUser>
     {
-        public IdentityDbContext(DbContextOptions options) : base(options)
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
         }
         protected override void OnModelCreating(ModelBuilder builder)
