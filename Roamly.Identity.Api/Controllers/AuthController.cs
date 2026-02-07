@@ -16,7 +16,7 @@ namespace Roamly.Identity.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
         {
             var user = new ApplicationUser { 
                 UserName = registerDto.Email,
