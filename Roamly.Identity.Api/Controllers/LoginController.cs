@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Roamly.Identity.Api.DTOs.Requests;
@@ -7,7 +8,7 @@ using Roamly.Identity.Api.Models;
 
 namespace Roamly.Identity.Api.Controllers
 {
-    [Route("api/auth")]
+    [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
