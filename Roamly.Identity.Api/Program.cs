@@ -17,7 +17,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    // 1. Общая информация о проекте
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "Roamly Identity API",
@@ -25,7 +24,6 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Микросервис идентификации"
     });
 
-    // 2. Описываем, как именно Swagger должен передавать токен
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -36,7 +34,6 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Введите только ваш JWT токен. Слово 'Bearer' будет добавлено автоматически."
     });
 
-    // 3. Делаем так, чтобы замок отображался у каждого метода
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
         {
