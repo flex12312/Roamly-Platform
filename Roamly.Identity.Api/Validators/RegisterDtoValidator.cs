@@ -31,6 +31,17 @@ namespace Roamly.Identity.Api.Validators
 
             RuleFor(r => r.LastName)
                 .NotEmpty().WithMessage("Введите фамилию");
+
+            RuleFor(r => r.BirthDate)
+                .NotEmpty().WithMessage("Укажите возраст")
+                .Must(BeAdult).WithMessage("Регистрация разрешена только лицам старше 18 лет");
+        }
+        private bool BeAdult(DateOnly date)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var age = today.Year - date.Year;
+            if (date > today.AddYears(-age)) age--;
+            return age >= 18;
         }
     }
 }
