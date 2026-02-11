@@ -7,13 +7,18 @@ using Roamly.Identity.Api.Interfaces;
 using Roamly.Identity.Api.Models;
 using Roamly.Identity.Api.Services;
 using System.Text;
-using System.Text.Unicode;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. ÐÅÃÈÑÒÐÀÖÈß ÑÅÐÂÈÑÎÂ (DI Container) ---
 
 builder.Services.AddControllers();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddFluentValidationAutoValidation();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
