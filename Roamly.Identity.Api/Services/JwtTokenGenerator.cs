@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Roamly.Identity.Api.Interfaces;
 using Roamly.Identity.Api.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,34 +11,37 @@ namespace Roamly.Identity.Api.Services
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
         private readonly IConfiguration _config;
-        public JwtTokenGenerator(IConfiguration config)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public JwtTokenGenerator(IConfiguration config, UserManager<ApplicationUser> userManager)
         {
-            _config = config; 
+            _config = config;
+            _userManager = userManager;
         }
-        public string GenerateToken(ApplicationUser user)
+        public async Task<string> GenerateToken(ApplicationUser user)
         {
-            var secretKey = _config["JwtSettings:SecretKey"];
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
+            var jwtSettings = _config.GetSection("JwtSettings");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
             var claims = new List<Claim>
             {
+               new Claim(JwtRegisteredClaimNames.Email, user.Email),
                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-               new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
                new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName)
             };
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires= DateTime.UtcNow.AddMinutes(double.Parse(_config["JwtSettings:ExpiryMinutes"]!)),
-                Issuer = _config["JwtSettings:Issuer"],
-                Audience = _config["JwtSettings:Audience"],
-                SigningCredentials = creds
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = jwtSettings["Issuer"],
+                Audience = jwtSettings["Audience"]
             };
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Roamly.Identity.Api.Constants;
 using Roamly.Identity.Api.DTOs.Requests;
 using Roamly.Identity.Api.Models;
 
@@ -21,14 +22,22 @@ namespace Roamly.Identity.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
         {
-            var user = _mapper.Map<ApplicationUser>(registerDto);
-            var res = await _userManager.CreateAsync(user, registerDto.Password);
-
-            if (!res.Succeeded)
+            var user = new ApplicationUser
             {
-                return BadRequest(res.Errors);
+                UserName = registerDto.Email, 
+                Email = registerDto.Email,
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                BirthDate = registerDto.BirthDate
+            };
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
+                return Ok("Пользователь успешно зарегистрирован с ролью Member");
             }
-            return Ok(new { message = "User registered successfully" });
+            return BadRequest(result.Errors);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Roamly.Identity.Api.Controllers
             var user = await _userManager.FindByEmailAsync(login.Email);
             if (user != null && await _userManager.CheckPasswordAsync(user, login.Password))
             {
-                var token = _jwtTokenGenerator.GenerateToken(user);
+                var token = await _jwtTokenGenerator.GenerateToken(user);
                 return Ok(new
                 {
                     Token = token,

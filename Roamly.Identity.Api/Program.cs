@@ -55,7 +55,11 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
 
 // Регистрация БД
 builder.Services.AddDbContext<IdentityDbContext>(options =>
@@ -97,6 +101,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    initializer.Initialize();
 }
 
 app.UseHttpsRedirection();
