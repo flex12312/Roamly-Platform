@@ -22,14 +22,8 @@ namespace Roamly.Identity.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
         {
-            var user = new ApplicationUser
-            {
-                UserName = registerDto.Email, 
-                Email = registerDto.Email,
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName,
-                BirthDate = registerDto.BirthDate
-            };
+            var user = _mapper.Map<ApplicationUser>(registerDto);
+           
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (result.Succeeded)

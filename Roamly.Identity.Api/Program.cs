@@ -13,7 +13,7 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. РЕГИСТРАЦИЯ СЕРВИСОВ (DI Container) ---
+// --- 1. (DI Container) ---
 
 builder.Services.AddControllers();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
@@ -27,7 +27,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "Roamly Identity API",
         Version = "v1",
-        Description = "Микросервис идентификации"
+        Description = "??????????? ?????????????"
     });
 
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -37,7 +37,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Введите только ваш JWT токен. Слово 'Bearer' будет добавлено автоматически."
+        Description = "??????? ?????? ??? JWT ?????. ????? 'Bearer' ????? ????????? ?????????????."
     });
 
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -61,12 +61,11 @@ builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 
-// Регистрация БД
 builder.Services.AddDbContext<IdentityDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityDbConnection")));
 
 
-// Регистрация Identity
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
@@ -91,11 +90,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
     };
 });
-// --- 2. СБОРКА ПРИЛОЖЕНИЯ ---
 
 var app = builder.Build();
 
-// --- 3. НАСТРОЙКА MIDDLEWARE (Pipeline) ---
+// --- 3.н MIDDLEWARE (Pipeline) ---
 
 if (app.Environment.IsDevelopment())
 {
@@ -106,7 +104,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
-    initializer.Initialize();
+    await initializer.InitializeAsync();
 }
 
 app.UseHttpsRedirection();

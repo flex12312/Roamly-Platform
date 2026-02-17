@@ -2,6 +2,7 @@
 using Roamly.Identity.Api.Constants;
 using Roamly.Identity.Api.Interfaces;
 using Roamly.Identity.Api.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Roamly.Identity.Api.Data
 {
@@ -9,32 +10,44 @@ namespace Roamly.Identity.Api.Data
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        public DbInitializer(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+        private readonly IConfiguration _config;
+        public DbInitializer(RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
+            IConfiguration config)  
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            _config = config;  
         }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
-            if (!_roleManager.RoleExistsAsync(UserRoles.Admin.ToString()).GetAwaiter().GetResult())
+            var roles = new[] { UserRoles.Admin, UserRoles.Member, UserRoles.Verified };
+            foreach (var role in roles)
             {
-                _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin.ToString())).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(UserRoles.Member.ToString())).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(UserRoles.Verified.ToString())).GetAwaiter().GetResult();
-
-                var admin = new ApplicationUser()
+                if (!await _roleManager.RoleExistsAsync(role.ToString()))
                 {
-                    UserName = "admin@roamly.com",
+                    await _roleManager.CreateAsync(new IdentityRole(role.ToString()));
+                }
+            }
+            var adminEmail = _config["ADMIN_EMAIL"];
+            var adminPassword = _config["ADMIN_PASSWORD"] ?? throw new InvalidOperationException("ADMIN_PASSWORD is not set"); ;
+            if (await _userManager.FindByEmailAsync(adminEmail) is null)
+            {
+                var admin = new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
                     FirstName = "Admin",
                     LastName = "Roamly",
-                    Email = "admin@roamly.com",
                     EmailConfirmed = true,
                     BirthDate = new DateOnly(1990, 1, 1)
                 };
-
-                _userManager.CreateAsync(admin, "Admin123*").GetAwaiter().GetResult();
-                _userManager.AddToRoleAsync(admin, UserRoles.Admin.ToString()).GetAwaiter().GetResult();
+                var result = await _userManager.CreateAsync(admin, adminPassword);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(admin, UserRoles.Admin.ToString());
+                }
             }
         }
     }
