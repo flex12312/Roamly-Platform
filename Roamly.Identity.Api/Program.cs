@@ -59,6 +59,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 builder.Services.AddDbContext<IdentityDbContext>(options =>

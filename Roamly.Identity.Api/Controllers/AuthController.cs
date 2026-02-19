@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Roamly.Identity.Api.Constants;
+﻿using Microsoft.AspNetCore.Mvc;
 using Roamly.Identity.Api.DTOs.Requests;
+using Roamly.Identity.Api.Interfaces;
 using Roamly.Identity.Api.Models;
 
 namespace Roamly.Identity.Api.Controllers
@@ -11,27 +9,24 @@ namespace Roamly.Identity.Api.Controllers
     [Route("api/[controller]")]
     public class AuthController: ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public AuthController(UserManager<ApplicationUser> userManager, IMapper mapper)
+        private readonly IAuthService _authService;
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
-            _mapper = mapper;
+            _authService = authService;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
         {
-            var user = _mapper.Map<ApplicationUser>(registerDto);
-           
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            var result = await _authService.RegisterAsync(registerDto);
+            return result == true ? Ok(new { message = "The user has been successfully registered" }) : BadRequest(new { message = "Registration failed" });
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto login)
+        {
 
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
-                return Ok("Пользователь успешно зарегистрирован с ролью Member");
-            }
-            return BadRequest(result.Errors);
+            var result = await _authService.LoginAsync(login);
+            return result != null ? Ok(new { token = result, userName = login.Email }) : Unauthorized(new { message = "Invalid password or email" });
         }
     }
 }
