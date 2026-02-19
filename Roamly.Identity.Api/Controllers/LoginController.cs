@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Roamly.Identity.Api.DTOs.Requests;
 using Roamly.Identity.Api.Interfaces;
@@ -28,7 +26,7 @@ namespace Roamly.Identity.Api.Controllers
             if (user != null && await _userManager.CheckPasswordAsync(user, login.Password))
             {
                 var token = await _jwtTokenGenerator.GenerateToken(user);
-                return Ok(new
+                return Ok(new 
                 {
                     Token = token,
                     UserName = user.UserName

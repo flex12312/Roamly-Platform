@@ -31,7 +31,7 @@ namespace Roamly.Identity.Api.Data
                 }
             }
             var adminEmail = _config["ADMIN_EMAIL"];
-            var adminPassword = _config["ADMIN_PASSWORD"] ?? throw new InvalidOperationException("ADMIN_PASSWORD is not set"); ;
+            var adminPassword = _config["ADMIN_PASSWORD"] ?? throw new InvalidOperationException("ADMIN_PASSWORD is not set"); 
             if (await _userManager.FindByEmailAsync(adminEmail) is null)
             {
                 var admin = new ApplicationUser
