@@ -10,6 +10,7 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using System.Reflection;
+using Roamly.Identity.Api.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +27,7 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "Roamly Identity API",
-        Version = "v1",
-        Description = "??????????? ?????????????"
+        Version = "v1"
     });
 
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -36,8 +36,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "??????? ?????? ??? JWT ?????. ????? 'Bearer' ????? ????????? ?????????????."
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header
     });
 
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -56,6 +55,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings"));
 
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();

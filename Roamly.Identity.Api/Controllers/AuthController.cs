@@ -24,7 +24,6 @@ namespace Roamly.Identity.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto login)
         {
-
             var result = await _authService.LoginAsync(login);
             return result != null ? Ok(new { token = result, userName = login.Email }) : Unauthorized(new { message = "Invalid password or email" });
         }
