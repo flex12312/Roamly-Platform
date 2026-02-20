@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Roamly.Identity.Api.Constants;
 using Roamly.Identity.Api.DTOs.Requests;
 using Roamly.Identity.Api.DTOs.Responses;
 using Roamly.Identity.Api.Interfaces;
 using Roamly.Identity.Api.Models;
+using Roamly.Identity.Api.Options;
 
 namespace Roamly.Identity.Api.Services
 {
@@ -12,22 +14,30 @@ namespace Roamly.Identity.Api.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly JwtSettings _jwtSettings;
         private readonly IMapper _mapper;
         public AuthService(UserManager<ApplicationUser> userManager, IJwtTokenGenerator jwtTokenGenerator
-            , IMapper mapper)
+            , IMapper mapper, IOptions<JwtSettings> options)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
             _userManager = userManager;
             _mapper = mapper;
+            _jwtSettings = options.Value;
         }
 
-        public async Task<string> LoginAsync(LoginRequestDto login)
+        public async Task<AuthResponseDto> LoginAsync(LoginRequestDto login)
         {
             var user = await _userManager.FindByEmailAsync(login.Email);
             if (user != null && await _userManager.CheckPasswordAsync(user, login.Password))
             {
                 var token = await _jwtTokenGenerator.GenerateToken(user);
-                return token;
+                return new AuthResponseDto
+                {
+                    Token = token,
+                    Email = user.Email ?? string.Empty,
+                    UserName = user.UserName ?? string.Empty,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes)  
+                };
             }
             return null;
         }
