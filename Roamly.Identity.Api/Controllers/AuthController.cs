@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Roamly.Identity.Api.DTOs.Requests;
 using Roamly.Identity.Api.Interfaces;
 using Roamly.Identity.Api.Models;
@@ -21,7 +22,9 @@ namespace Roamly.Identity.Api.Controllers
             var result = await _authService.RegisterAsync(registerDto);
             return result == true ? Ok(new { message = "The user has been successfully registered" }) : BadRequest(new { message = "Registration failed" });
         }
+
         [HttpPost("login")]
+        [EnableRateLimiting("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto login)
         {
             var result = await _authService.LoginAsync(login);
