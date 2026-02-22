@@ -13,6 +13,8 @@ using System.Reflection;
 using Roamly.Identity.Api.Options;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using StackExchange.Redis;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +76,16 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
+builder.Services.Configure<RedisSettings>(
+    builder.Configuration.GetSection(RedisSettings.Section));
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<RedisSettings>>().Value;
+    return ConnectionMultiplexer.Connect(settings.ConnectionString);
+});
+
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IAuthService, AuthService>();

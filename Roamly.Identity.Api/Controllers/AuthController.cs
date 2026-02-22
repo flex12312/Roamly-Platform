@@ -31,5 +31,12 @@ namespace Roamly.Identity.Api.Controllers
 
             return result != null ? Ok(result) : Unauthorized(new { message = "Invalid credentials" });
         }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequestDto refresh)
+        {
+            var result = await _authService.RefreshAsync(refresh.RefreshToken);
+            return result != null ? Ok(result) : Unauthorized(new { message = "Invalid refresh token" });
+        }
     }
 }

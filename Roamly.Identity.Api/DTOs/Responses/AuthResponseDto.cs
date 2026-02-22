@@ -6,5 +6,6 @@
         public required string Email { get; set; }
         public required string UserName { get; set; }
         public DateTime ExpiresAt { get; set; }
+        public string? RefreshToken { get; set; }
     }
 }

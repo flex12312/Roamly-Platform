@@ -13,35 +13,71 @@ namespace Roamly.Identity.Api.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly JwtSettings _jwtSettings;
         private readonly IMapper _mapper;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IRefreshTokenService _refreshTokenService;
+        private readonly JwtSettings _jwtSettings;
+       
         public AuthService(UserManager<ApplicationUser> userManager, IJwtTokenGenerator jwtTokenGenerator
-            , IMapper mapper, IOptions<JwtSettings> options)
+            , IMapper mapper, IOptions<JwtSettings> options, IRefreshTokenService refreshTokenService)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
             _userManager = userManager;
             _mapper = mapper;
             _jwtSettings = options.Value;
+            _refreshTokenService = refreshTokenService;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto login)
         {
             var user = await _userManager.FindByEmailAsync(login.Email);
-            if (user != null && await _userManager.CheckPasswordAsync(user, login.Password))
+            if (user == null || !await _userManager.CheckPasswordAsync(user, login.Password)) return null;
+            
+            var token = await _jwtTokenGenerator.GenerateToken(user);
+            var refreshToken = _refreshTokenService.GenerateRefreshToken();
+            var refreshTokenData = CreateRefreshToken(user.Id, refreshToken, DateTime.UtcNow);
+            await _refreshTokenService.SaveRefreshTokenAsync(refreshTokenData);
+
+            return new AuthResponseDto
             {
-                var token = await _jwtTokenGenerator.GenerateToken(user);
-                return new AuthResponseDto
-                {
-                    Token = token,
-                    Email = user.Email ?? string.Empty,
-                    UserName = user.UserName ?? string.Empty,
-                    ExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes)  
-                };
-            }
-            return null;
+                Token = token,
+                Email = user.Email ?? string.Empty,
+                UserName = user.UserName ?? string.Empty,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                RefreshToken = refreshToken
+            };
         }
 
+        public async Task<AuthResponseDto?> RefreshAsync(string refreshToken)
+        {
+            var token = await _refreshTokenService.GetRefreshTokenAsync(refreshToken);
+            if (token == null || !token.IsActive || token.IsAbsolutelyExpired)
+            {
+                await _refreshTokenService.RevokeRefreshTokenAsync(refreshToken);
+                return null;
+            }
+            var user = await _userManager.FindByIdAsync(token.UserId);
+            if (user == null)
+            {
+                await _refreshTokenService.RevokeRefreshTokenAsync(refreshToken);
+                return null;
+            }
+            var newJwtToken = await _jwtTokenGenerator.GenerateToken(user);
+            var newRefreshToken = _refreshTokenService.GenerateRefreshToken();
+
+            var newRefreshTokenData = CreateRefreshToken(user.Id, newRefreshToken,token.CreatedAt);
+            await _refreshTokenService.SaveRefreshTokenAsync(newRefreshTokenData);
+            await _refreshTokenService.RevokeRefreshTokenAsync(refreshToken);
+
+            return new AuthResponseDto
+            {
+                Token = newJwtToken,
+                Email = user.Email ?? string.Empty,
+                UserName = user.UserName ?? string.Empty,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                RefreshToken = newRefreshToken
+            };
+        }
 
         public async Task<bool> RegisterAsync(RegisterRequestDto register)
         {
@@ -55,6 +91,16 @@ namespace Roamly.Identity.Api.Services
                 return true;
             }
             return false;
+        }
+        private RefreshToken CreateRefreshToken(string userId, string token, DateTime createdAt)
+        {
+            return new RefreshToken
+            {
+                UserId = userId,
+                Token = token,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(30),
+                CreatedAt = createdAt
+            };
         }
     }
 }
