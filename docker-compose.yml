@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: roamly_postgres
+    environment:
+      POSTGRES_DB: roamly_identity_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: flex123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: roamly_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_:/data
+
+  identity-api:           
+    build:                 
+      context: ./Roamly.Identity.Api
+      dockerfile: Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Release
+    container_name: roamly_identity_api
+    ports:
+      - "7098:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__IdentityDbConnection=Host=postgres;Port=5432;Database=roamly_identity_db;Username=postgres;Password=flex123
+      - Redis__Host=redis
+      - Redis__Port=6379
+      - JwtSettings__SecretKey=ThisIsMyVerySecretKeyForRoamlyProject2026!!!
+      - JwtSettings__Issuer=Roamly.Identity.Api
+      - JwtSettings__Audience=Roamly.Clients
+      - JwtSettings__ExpiryMinutes=30
+      - AdminSettings__Email=admin@roamly.com
+      - AdminSettings__Password=TempPass123!
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+volumes:
+  postgres_:
+  redis_:

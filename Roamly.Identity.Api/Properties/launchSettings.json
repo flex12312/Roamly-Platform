@@ -1,37 +1,28 @@
-﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:59477",
-      "sslPort": 44390
-    }
-  },
+{
   "profiles": {
     "http": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5211",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ADMIN_EMAIL": "admin@roamly.com",
         "ADMIN_PASSWORD": "MySuperSecretDevPassword123!"
-      }
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5211"
     },
     "https": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7098;http://localhost:5211",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ADMIN_EMAIL": "admin@roamly.com",
         "ADMIN_PASSWORD": "MySuperSecretDevPassword123!"
-      }
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7098;http://localhost:5211"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -42,6 +33,26 @@
         "ADMIN_EMAIL": "admin@roamly.com",
         "ADMIN_PASSWORD": "MySuperSecretDevPassword123!"
       }
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {
+        "ASPNETCORE_HTTPS_PORTS": "8081",
+        "ASPNETCORE_HTTP_PORTS": "8080"
+      },
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:59477",
+      "sslPort": 44390
     }
   }
 }

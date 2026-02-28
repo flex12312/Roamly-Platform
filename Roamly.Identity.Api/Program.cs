@@ -131,12 +131,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
-    await initializer.InitializeAsync();
-}
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -144,5 +138,29 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        logger.LogInformation("Applying migrations...");
+        var context = services.GetRequiredService<IdentityDbContext>();
+        await context.Database.MigrateAsync();  
+        logger.LogInformation("Migrations applied successfully!");
+
+        logger.LogInformation("Initializing database...");
+        var initializer = services.GetRequiredService<IDbInitializer>();
+        await initializer.InitializeAsync();
+        logger.LogInformation("Database initialized successfully!");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Error during migration or initialization.");
+        throw;
+    }
+}
 
 app.Run();
