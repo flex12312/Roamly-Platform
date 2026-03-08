@@ -3,21 +3,28 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Roamly.Housing.Api.Data;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using System.Reflection;
+
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 // --- 1. РЕГИСТРАЦИЯ СЕРВИСОВ ---
 
-builder.Services.AddControllers();
+builder.Services.AddControllers();  
+builder.Services.AddFluentValidationAutoValidation(); 
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "Roamly Housing API",
-        Version = "v1",
-        Description = "Микросервис управления жильём"
+        Version = "v1"
     });
 
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme

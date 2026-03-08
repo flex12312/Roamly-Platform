@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Roamly.Housing.Api.DTOs.Requests;
+using Roamly.Housing.Api.Validators;
 using System.Security.Claims;
+using FluentValidation;
 
 namespace Roamly.Housing.Api.Controllers
 {
@@ -9,6 +12,12 @@ namespace Roamly.Housing.Api.Controllers
     [Route("api/[controller]")]
     public class TestController : ControllerBase
     {
+        [HttpPost("property")]
+        public async Task<IActionResult> CreateProperty([FromBody] CreatePropertyRequestDto dto)
+        {
+            return Ok(new { message = "Валидация прошла успешно!", data = dto });
+        }
+
         [AllowAnonymous]
         [HttpGet("public")]
         public IActionResult Test1()
