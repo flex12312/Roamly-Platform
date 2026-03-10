@@ -14,7 +14,8 @@ namespace Roamly.Housing.Api.DTOs.Responses
         public required int Bathrooms { get; set; }
         public required decimal PricePerNight { get; set; }
         public required bool IsAvailable { get; set; }
-        public required LocationResponseDto Location { get; set; } 
+        public bool IsPublished { get; set; }
+        public LocationResponseDto? Location { get; set; }
         public required List<PropertyPhotoResponseDto> Photos { get; set; }  
         public required List<AmenityResponseDto> Amenities { get; set; } 
         public DateTime CreatedAt { get; set; } 

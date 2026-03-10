@@ -30,7 +30,8 @@ namespace Roamly.Housing.Api.Validators
                 .GreaterThan(0).WithMessage("Количество ванн должно быть больше 0");
 
             RuleFor(r => r.LocationId)
-                .GreaterThan(0).WithMessage("ID локации должен быть больше 0");   
+                .GreaterThan(0).WithMessage("ID локации должен быть больше 0")
+                .When(r => r.LocationId.HasValue);
         }
     }
 }

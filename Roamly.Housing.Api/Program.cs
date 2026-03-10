@@ -6,6 +6,8 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using System.Reflection;
+using Roamly.Housing.Api.Interfaces;
+using Roamly.Housing.Api.Services;
 
 
 
@@ -13,10 +15,14 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 // --- 1. –≈√»—“–¿÷»ﬂ —≈–¬»—Œ¬ ---
 
-builder.Services.AddControllers();  
-builder.Services.AddFluentValidationAutoValidation(); 
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddControllers();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.AddScoped<IPropertyService, PropertyService>();
+
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

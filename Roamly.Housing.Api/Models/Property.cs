@@ -6,7 +6,7 @@ namespace Roamly.Housing.Api.Models
     {
         public required int Id { get; set; }
         public required string OwnerId { get; set; }
-        public required int LocationId { get; set; }
+        public int? LocationId { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
         public required PropertyType Type { get; set; }
@@ -15,6 +15,7 @@ namespace Roamly.Housing.Api.Models
         public required int Bathrooms { get; set; }
         public required decimal PricePerNight { get; set; }
         public required bool IsAvailable { get; set; }
+        public required bool IsPublished { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastUpdatedAt { get; set; }
         
