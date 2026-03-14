@@ -21,6 +21,8 @@ builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IPropertyPhotoService, PropertyPhotoService>();
+builder.Services.AddScoped<IAmenityService, AmenityService>();
 
 
 
@@ -99,6 +101,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseAuthentication();  
 app.UseAuthorization();  
 
@@ -114,6 +118,10 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<HousingDbContext>();
         await context.Database.MigrateAsync();
         logger.LogInformation("Migrations applied successfully!");
+
+        logger.LogInformation("Seeding database...");
+        await DbSeeder.SeedAsync(context);
+        logger.LogInformation("Database seeded successfully!");
     }
     catch (Exception ex)
     {
