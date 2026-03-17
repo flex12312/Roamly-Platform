@@ -14,6 +14,8 @@ namespace Roamly.Housing.Api.Mappings
             CreateMap<Location, LocationResponseDto>();
             CreateMap<PropertyPhoto, PropertyPhotoResponseDto>();
             CreateMap<Amenity, AmenityResponseDto>();
+            CreateMap<AddHouseRulesRequestDto, HouseRules>(); 
+            CreateMap<HouseRules, HouseRulesResponseDto>();
         }
     }
 }

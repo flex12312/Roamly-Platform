@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Roamly.Housing.Api.Data;
@@ -11,9 +12,11 @@ using Roamly.Housing.Api.Data;
 namespace Roamly.Housing.Api.Migrations
 {
     [DbContext(typeof(HousingDbContext))]
-    partial class HousingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260315125511_AddHouseRules")]
+    partial class AddHouseRules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

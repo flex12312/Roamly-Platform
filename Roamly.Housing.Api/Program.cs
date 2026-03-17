@@ -23,6 +23,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<IPropertyPhotoService, PropertyPhotoService>();
 builder.Services.AddScoped<IAmenityService, AmenityService>();
+builder.Services.AddScoped<IHouseRulesService, HouseRulesService>();
 
 
 

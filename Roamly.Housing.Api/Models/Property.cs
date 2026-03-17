@@ -22,6 +22,7 @@ namespace Roamly.Housing.Api.Models
 
 
         public Location? Location { get; set; }
+        public HouseRules? HouseRules { get; set; }
         public ICollection<PropertyPhoto> Photos { get; set; } = new List<PropertyPhoto>();
         public ICollection<Amenity> Amenities { get; set; } = new List<Amenity>();
     }
