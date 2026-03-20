@@ -116,6 +116,30 @@ services:
     networks:
       - roamly-network
     restart: unless-stopped
+
+  search-api:                                     
+    build:
+      context: .
+      dockerfile: Roamly.Search.Api/Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Release
+    container_name: roamly_search_api
+    ports:
+      - "7100:8080"                              
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__SearchDbConnection=Host=postgres;Port=5432;Database=roamly_housing_db;Username=postgres;Password=flex123
+      - Redis__Host=redis
+      - Redis__Port=6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - roamly-network
+    restart: unless-stopped
     
 networks:
   roamly-network:

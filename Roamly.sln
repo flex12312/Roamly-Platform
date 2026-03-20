@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roamly.Identity.Api", "Roam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roamly.Housing.Api", "Roamly.Housing.Api\Roamly.Housing.Api.csproj", "{8DBE14E8-8D59-4B5C-BDF7-D5424A7CBD95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roamly.Search.Api", "Roamly.Search.Api\Roamly.Search.Api.csproj", "{0CD38B22-E227-46C8-B5EA-0942BE1B6E77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8DBE14E8-8D59-4B5C-BDF7-D5424A7CBD95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DBE14E8-8D59-4B5C-BDF7-D5424A7CBD95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DBE14E8-8D59-4B5C-BDF7-D5424A7CBD95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CD38B22-E227-46C8-B5EA-0942BE1B6E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CD38B22-E227-46C8-B5EA-0942BE1B6E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CD38B22-E227-46C8-B5EA-0942BE1B6E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CD38B22-E227-46C8-B5EA-0942BE1B6E77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
