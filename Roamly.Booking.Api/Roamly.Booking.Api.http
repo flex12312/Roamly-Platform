@@ -1,0 +1,6 @@
+@Roamly.Booking.Api_HostAddress = http://localhost:5032
+
+GET {{Roamly.Booking.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -140,6 +140,32 @@ services:
     networks:
       - roamly-network
     restart: unless-stopped
+
+  booking-api:
+    build:
+      context: .
+      dockerfile: Roamly.Booking.Api/Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Release
+    container_name: roamly_booking_api
+    ports:
+      - "7101:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__BookingDbConnection=Host=postgres;Port=5432;Database=roamly_booking_db;Username=postgres;Password=flex123
+      - Kafka__BootstrapServers=kafka:9092
+      - JwtSettings__SecretKey=ThisIsMyVerySecretKeyForRoamlyProject2026!!!
+      - JwtSettings__Issuer=Roamly.Identity.Api
+      - JwtSettings__Audience=Roamly.Clients
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - roamly-network
+    restart: unless-stopped
     
 networks:
   roamly-network:
