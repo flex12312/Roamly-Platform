@@ -44,10 +44,17 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
 builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("BookingDbConnection")));
 
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddSingleton<IKafkaBookingEventPublisher, KafkaBookingEventPublisher>();
+
+builder.Services.AddHttpClient<IPropertyValidationService, PropertyValidationService>(client =>
+{
+    client.BaseAddress = new Uri("http://roamly_housing_api:8080"); 
+});
 
 var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
 var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "Roamly.Identity.Api";
@@ -94,11 +101,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll"); 
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

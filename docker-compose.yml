@@ -51,16 +51,22 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     ports:
       - "9092:9092"
       - "9093:9093"
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
     networks:
       - roamly-network
       
   identity-api:
     build:
-      context: ./Roamly.Identity.Api   
-      dockerfile: Dockerfile   
+      context: .
+      dockerfile: Roamly.Identity.Api/Dockerfile   
       args:
         - BUILD_CONFIGURATION=Release
     container_name: roamly_identity_api
@@ -89,8 +95,8 @@ services:
 
   housing-api:
     build:
-      context: ./Roamly.Housing.Api    
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Roamly.Housing.Api/Dockerfile
       args:
         - BUILD_CONFIGURATION=Release
     container_name: roamly_housing_api
@@ -112,7 +118,7 @@ services:
       redis:
         condition: service_started
       kafka:
-        condition: service_started
+        condition: service_healthy
     networks:
       - roamly-network
     restart: unless-stopped
@@ -158,11 +164,13 @@ services:
       - JwtSettings__SecretKey=ThisIsMyVerySecretKeyForRoamlyProject2026!!!
       - JwtSettings__Issuer=Roamly.Identity.Api
       - JwtSettings__Audience=Roamly.Clients
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+      - COMPlus_EnableHWIntrinsic=0
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
     networks:
       - roamly-network
     restart: unless-stopped
