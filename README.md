@@ -44,7 +44,7 @@ The project follows **Clean Architecture** and **DDD (Domain-Driven Design)** pr
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/AmletixQ/Roamly-Platform.git](https://github.com/AmletixQ/Roamly-Platform.git)
+   git clone [https://github.com/Roamly-Platform.git](https://github.com/Roamly-Platform.git)
 2. Start all services:
    ```bash
    docker-compose up -d
