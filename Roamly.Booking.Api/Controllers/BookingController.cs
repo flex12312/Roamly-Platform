@@ -44,6 +44,15 @@ namespace Roamly.Booking.Api.Controllers
             }
         }
 
+        [HttpPut("{id}/complete")]
+        public async Task<IActionResult> CompleteBooking(int id)
+        {
+            var res = await _bookingService.CompleteBookingAsync(id);
+            if (!res) return NotFound(new { message = "Бронь не найдена" });
+
+            return Ok(new { message = "Бронь успешно завершена" });
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<BookingResponseDto>> GetBookingById(int id)
         {

@@ -9,5 +9,7 @@ namespace Roamly.Booking.Api.Interfaces
         Task<BookingResponseDto?> GetBookingByIdAsync(int bookingId);
         Task<IEnumerable<BookingResponseDto>> GetUserBookingsAsync(string guestId);
         Task<bool> CancelBookingAsync(CancelBookingRequestDto dto, int bookingId);
+        Task<bool> CompleteBookingAsync(int bookingId);
+
     }
 }

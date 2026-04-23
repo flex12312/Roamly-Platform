@@ -78,7 +78,6 @@ namespace Roamly.Housing.Api.Consumers
                 using var jsonDoc = JsonDocument.Parse(message);
                 var root = jsonDoc.RootElement;
 
-
                 var eventTypeProp = root.EnumerateObject().FirstOrDefault(p => p.Name.Equals("EventType", StringComparison.OrdinalIgnoreCase));
 
                 if (eventTypeProp.Name is null || eventTypeProp.Value.ValueKind != JsonValueKind.String)
@@ -86,8 +85,8 @@ namespace Roamly.Housing.Api.Consumers
                     _logger.LogWarning("Missing or invalid 'EventType' in message: {Message}", message);
                     return;
                 }
-                var eventType = eventTypeProp.Value.GetString()!;
 
+                var eventType = eventTypeProp.Value.GetString()!;
                 _logger.LogInformation("Processing event: {EventType}", eventType);
 
                 using var scope = _scopeFactory.CreateScope();
@@ -174,6 +173,7 @@ namespace Roamly.Housing.Api.Consumers
                 _logger.LogWarning("Property {PropertyId} not found", propertyId);
             }
         }
+
         private bool TryGetPropertyId(JsonElement root, out int propertyId)
         {
             propertyId = 0;

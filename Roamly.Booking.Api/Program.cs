@@ -6,6 +6,7 @@ using Roamly.Booking.Api.Data;
 using System.Reflection;
 using Roamly.Booking.Api.Interfaces;
 using Roamly.Booking.Api.Services;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,10 @@ builder.Services.AddDbContext<BookingDbContext>(options =>
 
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddSingleton<IKafkaBookingEventPublisher, KafkaBookingEventPublisher>();
+
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+
 
 builder.Services.AddHttpClient<IPropertyValidationService, PropertyValidationService>(client =>
 {
