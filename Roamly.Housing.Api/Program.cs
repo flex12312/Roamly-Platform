@@ -8,6 +8,7 @@ using FluentValidation.AspNetCore;
 using System.Reflection;
 using Roamly.Housing.Api.Interfaces;
 using Roamly.Housing.Api.Services;
+using Roamly.Housing.Api.Consumers;
 
 
 
@@ -24,6 +25,7 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<IPropertyPhotoService, PropertyPhotoService>();
 builder.Services.AddScoped<IAmenityService, AmenityService>();
 builder.Services.AddScoped<IHouseRulesService, HouseRulesService>();
+builder.Services.AddHostedService<BookingEventConsumer>();
 
 
 

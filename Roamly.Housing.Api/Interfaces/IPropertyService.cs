@@ -6,6 +6,7 @@ namespace Roamly.Housing.Api.Interfaces
     public interface IPropertyService
     {
         Task<PropertyResponseDto?> CreatePropertyAsync(CreatePropertyRequestDto dto, string ownerId);
+        Task<bool> PropertyExistsAsync(int id);
         Task<PropertyResponseDto?> GetPropertyByIdAsync(int id);
         Task<IEnumerable<PropertyResponseDto>> GetAllPropertiesAsync();
         Task<PropertyResponseDto?> UpdatePropertyAsync(int id, UpdatePropertyRequestDto dto, string ownerId);

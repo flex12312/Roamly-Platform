@@ -31,12 +31,26 @@ namespace Roamly.Booking.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<BookingResponseDto>> CreateBooking(CreateBookingRequestDto dto)
         {
-            var guestId =  User.FindFirst("sub")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(guestId)) return Unauthorized(new { message = "User ID не найден" });
-            var res = await _bookingService.CreateBookingAsync(dto, guestId);
-            if (res == null) return BadRequest();
+            var guestId = User.FindFirst("sub")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(guestId)) return Unauthorized(new { message = "User ID not found" });
+            try
+            {
+                var res = await _bookingService.CreateBookingAsync(dto, guestId);
+                return CreatedAtAction(nameof(GetBookingById), new { id = res.Id }, res);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
-            return CreatedAtAction(nameof(GetBookingById), new { id = res.Id }, res);
+        [HttpPut("{id}/complete")]
+        public async Task<IActionResult> CompleteBooking(int id)
+        {
+            var res = await _bookingService.CompleteBookingAsync(id);
+            if (!res) return NotFound(new { message = "Бронь не найдена" });
+
+            return Ok(new { message = "Бронь успешно завершена" });
         }
 
         [HttpGet("{id}")]

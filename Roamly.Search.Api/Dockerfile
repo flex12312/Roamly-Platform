@@ -8,18 +8,20 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["Roamly.Search.Api/Roamly.Search.Api.csproj", "Roamly.Search.Api/"]
+COPY ["Roamly.Shared.Events/Roamly.Shared.Events.csproj", "Roamly.Shared.Events/"]
 COPY ["Roamly.Housing.Api/Roamly.Housing.Api.csproj", "Roamly.Housing.Api/"]
+COPY ["Roamly.Search.Api/Roamly.Search.Api.csproj", "Roamly.Search.Api/"]
 
 RUN dotnet restore "Roamly.Search.Api/Roamly.Search.Api.csproj"
 
-COPY . .
+COPY ["Roamly.Search.Api/", "Roamly.Search.Api/"]
+COPY ["Roamly.Housing.Api/", "Roamly.Housing.Api/"]
+COPY ["Roamly.Shared.Events/", "Roamly.Shared.Events/"]
 
 WORKDIR "/src/Roamly.Search.Api"
 RUN dotnet build "./Roamly.Search.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-
 RUN rm -f /src/Roamly.Housing.Api/appsettings*.json || true
 RUN dotnet publish "./Roamly.Search.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 

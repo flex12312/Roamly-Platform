@@ -54,12 +54,20 @@ namespace Roamly.Housing.Api.Services
 
             return _mapper.Map<IEnumerable<PropertyResponseDto>>(properties);
         }
-
+        public async Task<bool> PropertyExistsAsync(int id)
+        {
+            return await _dbContext.Properties.AnyAsync(p => p.Id == id);
+        }
         public async Task<PropertyResponseDto?> GetPropertyByIdAsync(int id)
         {
-            var property = await _dbContext.Properties.Include(p => p.Location).Include(p => p.Photos).Include(p => p.Amenities).FirstOrDefaultAsync(p => p.Id == id);
+            var property = await _dbContext.Properties
+                .Include(p => p.Location)
+                .Include(p => p.Photos)
+                .Include(p => p.Amenities)
+                .FirstOrDefaultAsync(p => p.Id == id && p.IsPublished);
+
             if (property == null) return null;
-            
+
             return _mapper.Map<PropertyResponseDto>(property);
         }
 

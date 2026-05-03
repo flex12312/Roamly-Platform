@@ -45,6 +45,14 @@ namespace Roamly.Housing.Api.Controllers
             return Ok(property);
         }
 
+        [AllowAnonymous] 
+        [HttpGet("{id}/exists")]
+        public async Task<ActionResult<bool>> CheckPropertyExists(int id)
+        {
+            var exists = await _propertyService.PropertyExistsAsync(id);
+            return Ok(exists);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<PropertyResponseDto>> UpdateProperty(int id, [FromBody] UpdatePropertyRequestDto dto)
         {

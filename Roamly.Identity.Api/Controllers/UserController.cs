@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Roamly.Identity.Api.Models;
+using System.Security.Claims;
 
 namespace Roamly.Identity.Api.Controllers
 {
@@ -19,7 +20,7 @@ namespace Roamly.Identity.Api.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUserInfo()
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
             var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
             

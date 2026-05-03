@@ -7,6 +7,13 @@
     <UserSecretsId>889c9fa1-656f-45b4-a005-31ce3bf54aea</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Новая папка\**" />
+    <Content Remove="Новая папка\**" />
+    <EmbeddedResource Remove="Новая папка\**" />
+    <None Remove="Новая папка\**" />
+  </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
 		<PackageReference Include="Confluent.Kafka" Version="2.3.0" />
@@ -15,7 +22,11 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Roamly.Housing.Api\Roamly.Housing.Api.csproj" />
+	  <ProjectReference Include="..\Roamly.Shared.Events\Roamly.Shared.Events.csproj" />
 	</ItemGroup>
 
 </Project>
