@@ -61,11 +61,13 @@ export default function PropertyPage() {
     }
     setBooking(true)
     try {
+      const totalNights = Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)))
       await bookingsApi.create({
         propertyId: Number(id),
         checkIn: new Date(checkIn).toISOString(),
         checkOut: new Date(checkOut).toISOString(),
         guests,
+        totalPrice: property!.pricePerNight * totalNights,
       })
       toast.success('Бронирование создано!')
       navigate('/my-bookings')

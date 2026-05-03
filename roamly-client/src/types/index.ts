@@ -165,6 +165,7 @@ export interface CreateBookingRequest {
   checkIn: string
   checkOut: string
   guests: number
+  totalPrice: number
 }
 
 export interface CreatePropertyRequest {
