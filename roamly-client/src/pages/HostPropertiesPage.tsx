@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { propertiesApi } from '../api/properties'
 import { useAuth } from '../context/AuthContext'
@@ -7,8 +8,14 @@ import { PropertyTypeLabels } from '../types'
 import toast from 'react-hot-toast'
 
 export default function HostPropertiesPage() {
-  const { user } = useAuth()
+  const { user, isLoading: authLoading } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login')
+    }
+  }, [authLoading, user, navigate])
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['my-properties'],
@@ -16,9 +23,16 @@ export default function HostPropertiesPage() {
     enabled: !!user,
   })
 
-  if (!user) {
-    navigate('/login')
-    return null
+  if (authLoading || !user) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-gray-100 rounded-xl h-24" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   const properties = (data?.data ?? []).filter((p) => p.ownerId === user.id)

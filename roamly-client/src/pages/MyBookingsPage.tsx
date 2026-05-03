@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { bookingsApi } from '../api/bookings'
 import { useAuth } from '../context/AuthContext'
@@ -7,10 +8,9 @@ import { ru } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { BookingStatusLabels, BookingStatus } from '../types'
 import { CalendarDays, Users, X } from 'lucide-react'
-import { useState } from 'react'
 
 export default function MyBookingsPage() {
-  const { user } = useAuth()
+  const { user, isLoading: authLoading } = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
@@ -33,9 +33,22 @@ export default function MyBookingsPage() {
   const [cancelId, setCancelId] = useState<number | null>(null)
   const [cancelReason, setCancelReason] = useState('')
 
-  if (!user) {
-    navigate('/login')
-    return null
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login')
+    }
+  }, [authLoading, user, navigate])
+
+  if (authLoading || !user) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-gray-100 rounded-xl h-28" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   const bookings = data?.data ?? []

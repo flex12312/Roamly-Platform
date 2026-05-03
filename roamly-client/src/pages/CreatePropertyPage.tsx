@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { propertiesApi } from '../api/properties'
 import { useAuth } from '../context/AuthContext'
@@ -7,7 +7,7 @@ import { PropertyType, PropertyTypeLabels } from '../types'
 import type { CreatePropertyRequest, CreateLocationRequest } from '../types'
 
 export default function CreatePropertyPage() {
-  const { user } = useAuth()
+  const { user, isLoading: authLoading } = useAuth()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState(1)
@@ -36,9 +36,22 @@ export default function CreatePropertyPage() {
   const updateLocation = (field: keyof CreateLocationRequest, value: string) =>
     setLocation((prev) => ({ ...prev, [field]: value }))
 
-  if (!user) {
-    navigate('/login')
-    return null
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login')
+    }
+  }, [authLoading, user, navigate])
+
+  if (authLoading || !user) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
+          <div className="h-40 bg-gray-100 rounded-xl" />
+        </div>
+      </div>
+    )
   }
 
   const handleSubmit = async () => {
