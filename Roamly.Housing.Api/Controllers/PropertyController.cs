@@ -28,6 +28,7 @@ namespace Roamly.Housing.Api.Controllers
             return CreatedAtAction(nameof(GetPropertyById), new { id = result.Id }, result);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PropertyResponseDto>>> GetAllProperties()
         {
@@ -36,6 +37,7 @@ namespace Roamly.Housing.Api.Controllers
             return Ok(properties);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<PropertyResponseDto>> GetPropertyById(int id)
         {
